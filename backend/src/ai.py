@@ -425,7 +425,7 @@ SCORING AND OUTPUT RULES:
 - virality_reasoning and reasoning should cite what is actually present in the chosen span
 - summary and key_topics must also stay grounded in the transcript and should not add outside interpretation
 
-Find the number of compelling segments requested in the task (usually 2-5) that would work well as standalone clips. Quality over quantity: choose fewer stronger segments over filling a quota. Every selected segment must be accurate, self-contained, have proper time ranges, and score high on virality metrics."""
+Find the number of compelling segments requested in the task (at most 8; fewer when fewer strong moments exist) that would work well as standalone clips. Quality over quantity: choose fewer stronger segments over filling a quota. Every selected segment must be accurate, self-contained, have proper time ranges, and score high on virality metrics."""
 
 def build_transcript_system_prompt(clip_length: str = "auto") -> str:
     bounds = clip_duration(clip_length)
@@ -833,7 +833,7 @@ def build_transcript_analysis_prompt(
     transcript; without it the prompt is unchanged.
     """
     bounds = clip_duration(clip_length)
-    segment_target = ANALYSIS_WINDOW_SEGMENT_TARGET if window else "2-5"
+    segment_target = ANALYSIS_WINDOW_SEGMENT_TARGET if window else "up to 8 (fewer if fewer strong moments exist; never pad)"
     window_note = ""
     if window:
         window_note = (
@@ -872,6 +872,16 @@ Selection target:
 - If a strong moment is shorter than {bounds.ideal_minimum} seconds, first try expanding to nearby contiguous transcript lines that add useful context.
 - Skip weak standalone picks: intros, sponsor reads, CTAs, contextless quotes, repeated points, vague setup, and answer fragments that require prior context.
 - Before returning a segment, ask whether a viewer would understand and care without seeing the rest of the source video.
+
+Mandatory clip rules (non-negotiable; these override the context-expansion guidance above):
+1. Strict duration: every segment 15-25 seconds. Absolute maximum 30 seconds, never more.
+2. Immediate hook: start at the hardest, most direct or uncomfortable sentence, even mid-topic. Cut any intro, greeting or prior context; the first 1-2 seconds must grab attention.
+3. One complete idea per clip, understandable alone without seeing the rest of the source video.
+4. Fast pace: choose dynamic spans with no long pauses, filler words or dead time.
+5. Strong close: end on a punchy statement or a question/claim that provokes comments and saves. No weak endings.
+6. Discard any slow segment or any segment that depends on earlier context.
+7. Different angles: each clip covers a different point. No repeated ideas or near-duplicate hook titles.
+8. Order and quality: sort segments from strongest to weakest. If the source lacks enough strong moments, return only the truly good ones (3 strong clips beat 8 mediocre ones). Never pad with weak clips.
 
 Critical accuracy requirements:
 - Do not fabricate or embellish content.

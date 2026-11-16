@@ -266,7 +266,7 @@ def create_optimized_clip(
     start_time: float,
     end_time: float,
     output_path: Path,
-    add_subtitles: bool = True,
+    add_subtitles: bool = False,
     font_family: Optional[str] = None,
     font_size: Optional[int] = None,
     font_color: Optional[str] = None,
@@ -540,7 +540,7 @@ def create_clips_from_segments(
     font_color: Optional[str] = None,
     caption_template: str = "default",
     output_format: str = "vertical",
-    add_subtitles: bool = True,
+    add_subtitles: bool = False,
     cleanup_settings: Optional[Dict[str, Any]] = None,
     max_clip_seconds: float = 60.0,
 ) -> List[Dict[str, Any]]:
@@ -776,7 +776,7 @@ def create_clips_with_transitions(
     font_color: Optional[str] = None,
     caption_template: str = "default",
     output_format: str = "vertical",
-    add_subtitles: bool = True,
+    add_subtitles: bool = False,
     cleanup_settings: Optional[Dict[str, Any]] = None,
     max_clip_seconds: float = 60.0,
 ) -> List[Dict[str, Any]]:

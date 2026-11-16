@@ -29,7 +29,7 @@ async def process_video_task(
     caption_template: str = "default",
     processing_mode: str = "fast",
     output_format: str = "vertical",
-    add_subtitles: bool = True,
+    add_subtitles: bool = False,
     cleanup_settings: Dict[str, Any] | None = None,
     clip_length: str = "auto",
 ) -> Dict[str, Any]:

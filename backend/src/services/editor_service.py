@@ -868,7 +868,7 @@ async def prepare_editor(ctx, task_id: str, clip_id: str, filename: str):
                         "captions": initial_caption_style(
                             task,
                             caption_settings,
-                            source_settings.get("add_subtitles", True),
+                            source_settings.get("add_subtitles", False),
                             clip_width,
                             clip_height,
                         ),

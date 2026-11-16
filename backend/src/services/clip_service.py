@@ -221,7 +221,7 @@ class ClipEditingMixin:
         source_type = task.get("source_type")
         metadata = await self._load_task_source_settings(task_id)
         output_format = metadata.get("output_format", "vertical")
-        add_subtitles = metadata.get("add_subtitles", True)
+        add_subtitles = metadata.get("add_subtitles", False)
         cleanup_payload = cleanup_settings or {
             "cut_long_pauses": metadata.get("cut_long_pauses"),
             "pause_threshold_ms": metadata.get("pause_threshold_ms"),
@@ -966,7 +966,7 @@ class ClipEditingMixin:
     async def _load_task_source_settings(self, task_id: str) -> Dict[str, Any]:
         defaults = {
             "output_format": "vertical",
-            "add_subtitles": True,
+            "add_subtitles": False,
             "clip_length": "auto",
             **normalize_clip_cleanup_settings(),
         }

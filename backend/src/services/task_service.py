@@ -484,7 +484,7 @@ class TaskService(ClipEditingMixin):
         caption_template: str = "default",
         processing_mode: str = "fast",
         output_format: str = "vertical",
-        add_subtitles: bool = True,
+        add_subtitles: bool = False,
         progress_callback: Optional[Callable] = None,
         should_cancel: Optional[Callable] = None,
         clip_ready_callback: Optional[Callable] = None,

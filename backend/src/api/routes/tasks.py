@@ -625,9 +625,9 @@ async def _create_task(request: Request, db: AsyncSession, attempt: SourceAttemp
     output_format = data.get("output_format", "vertical")
     if output_format not in VALID_OUTPUT_FORMATS:
         output_format = "vertical"
-    add_subtitles = data.get("add_subtitles", True)
+    add_subtitles = data.get("add_subtitles", False)
     if not isinstance(add_subtitles, bool):
-        add_subtitles = True
+        add_subtitles = False
     try:
         clip_length = validate_clip_length(data.get("clip_length", "auto"))
     except ValueError as exc:
@@ -1671,7 +1671,7 @@ async def resume_task(
             source_url = task.get("source_url")
             source_type = task.get("source_type")
             output_format = "vertical"
-            add_subtitles = True
+            add_subtitles = False
 
             metadata = await _load_task_source_metadata(task_id, db=db)
             if not source_url:
