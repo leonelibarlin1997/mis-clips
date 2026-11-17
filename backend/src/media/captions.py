@@ -435,7 +435,7 @@ def build_hook_title_ass(
     # before the spoken line. Long titles wrap to two lines, and a line that
     # still does not fit (a long compound word, or two long lines) shrinks
     # below the preferred size so it is not clipped at the frame edge.
-    base_px = min(96, max(caption_font_px + 8, int(round(caption_font_px * 1.35))))
+    base_px = min(120, max(caption_font_px + 12, int(round(caption_font_px * 1.6))))
     if editor_style is not None:
         base_px = int(editor_style["base_px"])
     usable_width = video_width - 2 * max(48, int(video_width * HOOK_TITLE_SIDE_MARGIN_FRAC))
@@ -460,9 +460,9 @@ def build_hook_title_ass(
     )
     if border_style == 3:
         outline_px = max(4, hook_px // 6)  # backing-box padding
-    elif outline_px == 0:
-        outline_px = max(2, hook_px // 16)  # always keep contrast on video
-    shadow_px = max(2, hook_px // 20) if template.get("shadow") else 0
+    else:
+        outline_px = max(outline_px, hook_px // 12)  # heavy dark edge keeps the title readable on any frame
+    shadow_px = max(3, hook_px // 14) if template.get("shadow") else 0
     margin_v = max(48, int(video_height * HOOK_TITLE_TOP_MARGIN_FRAC))
 
     style_line = (

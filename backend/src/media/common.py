@@ -121,8 +121,8 @@ HOOK_TITLE_MIN_SECONDS = 1.5
 
 HOOK_TITLE_SIDE_MARGIN_FRAC = 0.07
 
-# Clears the platform's top UI (tabs, search) with room to spare.
-HOOK_TITLE_TOP_MARGIN_FRAC = 0.12
+# Clears the platform's top UI and sits just above the letterboxed video.
+HOOK_TITLE_TOP_MARGIN_FRAC = 0.20
 
 ANALYSIS_SEGMENT_MIN_WORDS = 8
 

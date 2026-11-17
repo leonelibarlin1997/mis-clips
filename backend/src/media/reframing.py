@@ -1632,6 +1632,8 @@ def describe_vertical_layout(
         )
     if all(s["kind"] == "fit" for s in plan):
         return _described("fit", build_full_frame_filter(fit_windows=fit_windows), "complex", 0.80)
+    # Full frame on a blurred vertical canvas: a 9:16 crop would cut the source's burned-in subtitles.
+    return _described("fit", build_full_frame_filter(), "complex", 0.80)
 
     keys = build_crop_trajectory(track, width, crop_w) if track else []
     # A cut by itself is not camera motion. Ken Burns stays available unless
