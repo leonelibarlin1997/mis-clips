@@ -26,6 +26,8 @@ from .common import (
     HOOK_TITLE_MIN_SECONDS,
     HOOK_TITLE_SECONDS,
     HOOK_TITLE_SIDE_MARGIN_FRAC,
+    HOOK_TITLE_FONT,
+    HOOK_TITLE_OUTLINE_PX,
     HOOK_TITLE_TOP_MARGIN_FRAC,
     _EMOJI_SUPPORT_CACHE,
     logger,
@@ -421,15 +423,14 @@ def build_hook_title_ass(
     outline/backing for contrast, power words and numbers in the template's
     highlight colour, and a quick fade+pop entrance.
     """
-    uppercase = bool(template.get("uppercase"))
-    title_text = hook_title.upper() if uppercase else hook_title
-
-    primary = hex_to_ass_color(template.get("font_color"), "#FFFFFF")
-    highlight = hex_to_ass_color(
-        template.get("emphasis_color") or template.get("highlight_color"), "#FFE000"
-    )
-    outline = hex_to_ass_color(template.get("stroke_color") or "#000000", "#000000")
-    back_color = hex_to_ass_color(template.get("background_color"), "#00000080")
+    # Fixed design for the hook title: bold italic caps, white with warm-yellow
+    # keywords, heavy black outline, no backing box.
+    title_text = hook_title.upper()
+    font_name = HOOK_TITLE_FONT
+    primary = hex_to_ass_color("#FFFFFF")
+    highlight = hex_to_ass_color("#F4C84A")
+    outline = hex_to_ass_color("#000000")
+    back_color = hex_to_ass_color("#00000080")
 
     # Larger than the captions: the headline is what a scrolling viewer reads
     # before the spoken line. Long titles wrap to two lines, and a line that
@@ -454,31 +455,39 @@ def build_hook_title_ass(
 
     base_stroke = int(template.get("stroke_width", 3) or 0)
     has_outline = template.get("stroke_color") is not None and base_stroke > 0
-    border_style = 3 if (not has_outline and template.get("background_color")) else 1
+    border_style = 1
     outline_px = (
         max(base_stroke, round(hook_px * base_stroke / 26)) if has_outline else 0
     )
     if border_style == 3:
         outline_px = max(4, hook_px // 6)  # backing-box padding
     else:
-        outline_px = max(outline_px, hook_px // 12)  # heavy dark edge keeps the title readable on any frame
-    shadow_px = max(3, hook_px // 14) if template.get("shadow") else 0
+        outline_px = HOOK_TITLE_OUTLINE_PX
+    shadow_px = 2
     margin_v = max(48, int(video_height * HOOK_TITLE_TOP_MARGIN_FRAC))
 
     style_line = (
         f"Style: Hook,{font_name},{hook_px},{primary},&H000000FF,{outline},{back_color},"
-        f"1,0,0,0,100,100,0,0,{border_style},{outline_px},{shadow_px},8,60,60,{margin_v},1"
+        f"1,1,0,0,100,100,0,0,{border_style},{outline_px},{shadow_px},8,60,60,{margin_v},1"
     )
 
-    # Accent power words / numbers in the template highlight colour.
+    # 2-3 keywords in yellow (power words or numbers first, then the longest words).
+    all_words = [w for line in lines for w in line.split()]
+    keys = [
+        i for i, w in enumerate(all_words)
+        if (t := normalize_token(w)) and (t in POWER_WORDS or any(c.isdigit() for c in t))
+    ]
+    if len(keys) < 2:
+        keys += [i for i in sorted(range(len(all_words)), key=lambda i: -len(all_words[i])) if i not in keys][: 2 - len(keys)]
+    accent = set(keys[:3])
     rendered_lines: List[str] = []
+    index = 0
     for line in lines:
         spans: List[str] = []
         for word in line.split():
-            token = normalize_token(word)
-            accented = bool(token) and (token in POWER_WORDS or any(c.isdigit() for c in token))
-            color = highlight if accented else primary
+            color = highlight if index in accent else primary
             spans.append(f"{{\\c{color}}}{escape_ass_text(word)}")
+            index += 1
         rendered_lines.append(" ".join(spans))
     text = "\\N".join(rendered_lines)
 

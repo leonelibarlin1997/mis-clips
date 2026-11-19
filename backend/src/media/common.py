@@ -124,6 +124,10 @@ HOOK_TITLE_SIDE_MARGIN_FRAC = 0.07
 # Clears the platform's top UI and sits just above the letterboxed video.
 HOOK_TITLE_TOP_MARGIN_FRAC = 0.20
 
+# Heavy display face for the hook title (installed via fonts-montserrat); bold italic.
+HOOK_TITLE_FONT = "Montserrat Black"
+HOOK_TITLE_OUTLINE_PX = 5
+
 ANALYSIS_SEGMENT_MIN_WORDS = 8
 
 ANALYSIS_SEGMENT_MAX_WORDS = 8
