@@ -26,6 +26,8 @@ from .common import (
     HOOK_TITLE_MIN_SECONDS,
     HOOK_TITLE_SECONDS,
     HOOK_TITLE_SIDE_MARGIN_FRAC,
+    CTA_LINES,
+    CTA_SECONDS,
     HOOK_TITLE_FONT,
     HOOK_TITLE_OUTLINE_PX,
     HOOK_TITLE_TOP_MARGIN_FRAC,
@@ -401,6 +403,34 @@ def build_point_label_ass(
     return style_line, events
 
 
+def build_cta_ass(
+    video_width: int, video_height: int, output_duration: float
+) -> Tuple[str, List[str]]:
+    """Style and event for the fixed CTA: bottom centre, last CTA_SECONDS only.
+
+    Its bottom margin matches the hook title's top margin, so the two sit
+    symmetrically from the frame edges.
+    """
+    usable_width = video_width - 2 * max(48, int(video_width * HOOK_TITLE_SIDE_MARGIN_FRAC))
+    longest = max(len(line) for line in CTA_LINES)
+    # Montserrat Black capitals run about 0.62 em per character; shrink to fit the width.
+    font_px = min(84, max(24, int(usable_width / (longest * 0.62))))
+    margin_v = max(48, int(video_height * HOOK_TITLE_TOP_MARGIN_FRAC))
+    primary = hex_to_ass_color("#F4C84A")
+    outline = hex_to_ass_color("#000000")
+    style_line = (
+        f"Style: CTA,{HOOK_TITLE_FONT},{font_px},{primary},&H000000FF,{outline},&H00000000,"
+        f"0,0,0,0,100,100,0,0,1,{HOOK_TITLE_OUTLINE_PX},2,2,60,60,{margin_v},1"
+    )
+    start = max(0.0, output_duration - CTA_SECONDS)
+    text = "\\N".join(escape_ass_text(line) for line in CTA_LINES)
+    event = (
+        f"Dialogue: 1,{ass_timestamp(start)},{ass_timestamp(output_duration)},CTA,,0,0,0,,"
+        f"{{\\an2\\fad(150,0)}}{text}"
+    )
+    return style_line, [event]
+
+
 def build_hook_title_ass(
     hook_title: str,
     template: Dict[str, Any],
@@ -626,9 +656,6 @@ def build_assemblyai_ass_subtitles(
                 passage_breaks = _passage_breaks(transcript_data, keep_ranges)
         else:
             relevant_words = get_words_in_range(transcript_data, clip_start, clip_end)
-    if not relevant_words and not hook_title and not point_labels:
-        logger.warning("No words or hook title available for ASS subtitles")
-        return False
 
     effective_font_family, template = ensure_glyph_coverage(
         effective_font_family,
@@ -738,6 +765,9 @@ def build_assemblyai_ass_subtitles(
         )
         hook_style_block += f"{point_style_line}\n"
         hook_events = hook_events + point_events
+    cta_style_line, cta_events = build_cta_ass(video_width, video_height, output_duration)
+    hook_style_block += f"{cta_style_line}\n"
+    hook_events = hook_events + cta_events
 
     # Contextual emoji + emphasis annotations over the whole clip word list.
     emoji_by_idx, emphasis_idx = annotate_caption_words(

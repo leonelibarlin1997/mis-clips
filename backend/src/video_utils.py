@@ -468,7 +468,7 @@ def create_optimized_clip(
 
             burn_ass_path: Optional[Path] = None
             fonts_dir: Optional[Path] = None
-            if (add_subtitles or hook_title or point_labels) and build_assemblyai_ass_subtitles(
+            if build_assemblyai_ass_subtitles(
                 video_path,
                 start_time,
                 end_time,

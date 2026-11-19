@@ -128,6 +128,10 @@ HOOK_TITLE_TOP_MARGIN_FRAC = 0.20
 HOOK_TITLE_FONT = "Montserrat Black"
 HOOK_TITLE_OUTLINE_PX = 5
 
+# Fixed call to action on the last seconds of every clip (bottom centre, same margin as the title).
+CTA_SECONDS = 5.0
+CTA_LINES = ("VIDEO COMPLETO EN", "YOUTUBE: RINCÓNDENADIE")
+
 ANALYSIS_SEGMENT_MIN_WORDS = 8
 
 ANALYSIS_SEGMENT_MAX_WORDS = 8
