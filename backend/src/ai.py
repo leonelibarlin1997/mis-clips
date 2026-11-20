@@ -833,7 +833,7 @@ def build_transcript_analysis_prompt(
     transcript; without it the prompt is unchanged.
     """
     bounds = clip_duration(clip_length)
-    segment_target = ANALYSIS_WINDOW_SEGMENT_TARGET if window else "up to 8 (fewer if fewer strong moments exist; never pad)"
+    segment_target = ANALYSIS_WINDOW_SEGMENT_TARGET if window else "5 to 10 (fewer if fewer truly strong moments exist; never pad)"
     window_note = ""
     if window:
         window_note = (
@@ -874,7 +874,7 @@ Selection target:
 - Before returning a segment, ask whether a viewer would understand and care without seeing the rest of the source video.
 
 Mandatory clip rules (non-negotiable; these override the context-expansion guidance above):
-1. Strict duration: every segment 15-25 seconds. Absolute maximum 30 seconds, never more.
+1. Duration by content: 15-25 seconds for quick strong ideas, 25-40 for reflections with development and conclusion, 40-60 only when the story or explanation really needs it. Never pad a clip and never cut a good reflection just to hit a length. Never exceed 60 seconds.
 2. Immediate hook: start at the hardest, most direct or uncomfortable sentence, even mid-topic. Cut any intro, greeting or prior context; the first 1-2 seconds must grab attention.
 3. One complete idea per clip, understandable alone without seeing the rest of the source video.
 4. Fast pace: choose dynamic spans with no long pauses, filler words or dead time.
@@ -882,6 +882,22 @@ Mandatory clip rules (non-negotiable; these override the context-expansion guida
 6. Discard any slow segment or any segment that depends on earlier context.
 7. Different angles: each clip covers a different point. No repeated ideas or near-duplicate hook titles.
 8. Order and quality: sort segments from strongest to weakest. If the source lacks enough strong moments, return only the truly good ones (3 strong clips beat 8 mediocre ones). Never pad with weak clips.
+
+Editorial brief (channel objective and criteria, applied on top of the rules above):
+Goal: pick fragments of the source that a stranger scrolling TikTok stops for, identifies with, and wants to hear in full on the YouTube channel "Rincon de Nadie". Not just pretty, motivational or deep phrases: evaluate the whole fragment.
+- Prioritise: blunt phrases that challenge a common belief; uncomfortable truths or unexpected perspectives; emotional identification; reflections on loneliness, relationships, psychology, habits, fear, ego, self-sabotage and human behaviour; explanations that cause "I never thought of it that way"; moments that invite comments, disagreement or personal experience; ideas understood quickly but with depth; narrative progression or a strong conclusion; lines that make the viewer curious about the full video.
+- HOOK: open on a line that grabs attention. No greetings, intros or context that takes too long to reach the point.
+- AUTONOMY: understandable alone, without the earlier minutes.
+- RETENTION: keep interest to the end (tension, curiosity or a final payoff).
+- VALUE: a real reflection, idea, emotion, information or perspective.
+- DISCOVERY: interesting to someone who never saw the channel.
+- CONVERSION: leave the viewer wanting the fuller reflection on YouTube; do not resolve the whole topic.
+- NATURALNESS: cut where the speech flows; never force cuts that change the meaning.
+- VARIETY: different angles, emotions, topics and hooks. Never two clips that say essentially the same thing.
+- ORDER: sort from highest to lowest potential for this goal.
+- hook_title: 3-6 words, short enough for a two-line header, in the transcript's language.
+- Be demanding: few excellent clips beat many mediocre ones. Return fewer clips rather than padding.
+- Keep the JSON output format above exactly; the brief changes which segments you choose, not the output schema.
 
 Critical accuracy requirements:
 - Do not fabricate or embellish content.
